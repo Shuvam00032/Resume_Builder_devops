@@ -93,50 +93,30 @@ stages {
     stage("Deploy Containers") {
         steps {
             sh '''
-                echo "Stopping old containers..."
-
                 docker stop resume-frontend || true
                 docker stop resume-backend || true
-
-                echo "Removing old containers..."
 
                 docker rm resume-frontend || true
                 docker rm resume-backend || true
 
-                echo "Pulling latest images..."
-
                 docker pull shuvam0032/resume-builder-frontend:latest
                 docker pull shuvam0032/resume-builder-backend:latest
-
-                echo "Starting backend container..."
 
                 docker run -d \
                   --name resume-backend \
                   -p 8082:8080 \
                   shuvam0032/resume-builder-backend:latest
 
-                echo "Starting frontend container..."
-
                 docker run -d \
                   --name resume-frontend \
                   -p 3000:80 \
                   shuvam0032/resume-builder-frontend:latest
-
-                echo "Deployment completed successfully!"
             '''
         }
     }
 }
 
 post {
-    success {
-        echo "Pipeline completed successfully!"
-    }
-
-    failure {
-        echo "Pipeline failed!"
-    }
-
     always {
         cleanWs()
     }
