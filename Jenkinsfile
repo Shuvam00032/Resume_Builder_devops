@@ -30,7 +30,7 @@ pipeline {
     stage("Build Frontend") {
       steps {
         dir("resume-builder") {
-          sh "npm ci"
+          sh "npm install"
           sh "npm run build"
         }
       }
