@@ -39,8 +39,17 @@ The `Jenkinsfile` runs:
 2. Add credentials:
    - **ID:** `dockerhub-creds` (Username with password for Docker Hub)
 3. Configure tools (if used): NodeJS, Maven3.
-4. Ensure Jenkins agent can run Docker (`DOCKER_HOST` is set in the pipeline for Windows agents).
-5. Create a **Pipeline** job pointing to the repo and `Jenkinsfile`.
+4. Ensure the Jenkins agent is **Linux** (or use `sh` steps). The pipeline uses `sh`, not Windows `bat`.
+5. **Fix Docker permission** (required for build/push stages):
+   - Error: `permission denied ... docker.sock`
+   - Full steps: see [`jenkins/README.md`](jenkins/README.md)
+   - Quick start:
+     ```bash
+     cd jenkins
+     docker compose up -d --build
+     docker exec jenkins docker ps
+     ```
+6. Create a **Pipeline** job pointing to the repo and `Jenkinsfile`.
 
 ### Image names (already in Jenkinsfile)
 
