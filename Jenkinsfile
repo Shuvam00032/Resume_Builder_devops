@@ -88,7 +88,11 @@ pipeline {
 
         stage("Deploy Containers") {
             steps {
+                // We pass Jenkins env variables directly into the shell block smoothly
                 sh '''
+                    echo "Ensuring custom Docker network exists..."
+                    docker network create resume-network || true
+
                     echo "Stopping old containers..."
                     docker stop resume-frontend || true
                     docker stop resume-backend || true
@@ -97,21 +101,22 @@ pipeline {
                     docker rm resume-frontend || true
                     docker rm resume-backend || true
 
-                    echo "Pulling latest images..."
-                    docker pull shuvam0032/resume-builder-frontend:latest
-                    docker pull shuvam0032/resume-builder-backend:latest
-
-                    echo "Starting backend container..."
+                    echo "Starting backend container using current build tag..."
                     docker run -d \
                       --name resume-backend \
+                      --network resume-network \
                       -p 8082:8080 \
-                      shuvam0032/resume-builder-backend:latest
+                      '"${FRONTEND_IMAGE}:${IMAGE_TAG}"'
 
-                    echo "Starting frontend container..."
+                    echo "Starting frontend container using current build tag..."
                     docker run -d \
                       --name resume-frontend \
+                      --network resume-network \
                       -p 3000:80 \
-                      shuvam0032/resume-builder-frontend:latest
+                      '"${FRONTEND_IMAGE}:${IMAGE_TAG}"'
+
+                    echo "Cleaning up dangling/old images to save disk space..."
+                    docker image prune -f
 
                     echo "Deployment completed successfully!"
                 '''
