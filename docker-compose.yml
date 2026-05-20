@@ -1,0 +1,60 @@
+services:
+  frontend:
+    build:
+      context: ./resume-builder
+      args:
+        VITE_API_URL: ""
+        VITE_RAZORPAY_KEY_ID: ${VITE_RAZORPAY_KEY_ID:-rzp_test_SBXlsTVhp4Lv1g}
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./resumebuilderapi
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/resumebuilder_v2
+      APP_BASE_URL: http://localhost:3000
+      APP_CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000
+      APP_AUTH_REQUIRE_EMAIL_VERIFICATION: "true"
+      JWT_SECRET: dev-docker-jwt-secret-key-min-32-chars-long-2026
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-mailpit}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-1025}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-}
+      SPRING_MAIL_FROM: ${SPRING_MAIL_FROM:-noreply@resumebuilder.local}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-dseeqao5l}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-694593474331276}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-hdib8JUVJhJho1ENbo_2r5M9srs}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-rzp_test_SBXlsTVhp4Lv1g}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-YRKqprUcXvB5cLXAtxsS2twH}
+    depends_on:
+      mongo:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+  mongo:
+    image: mongo:7
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  mongo-data:

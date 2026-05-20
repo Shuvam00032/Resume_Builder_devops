@@ -1,0 +1,15 @@
+# Copy this file to application-local.properties (next to pom.xml, NOT under src/main/resources).
+# application-local.properties is gitignored — never commit real secrets.
+
+spring.mail.username=your-brevo-smtp-login
+spring.mail.password=your-brevo-smtp-password
+spring.mail.properties.mail.smtp.from=your-verified-sender@example.com
+
+cloudinary.cloud-name=your-cloud-name
+cloudinary.api-key=your-api-key
+cloudinary.api-secret=your-api-secret
+
+jwt.secret=replace-with-a-long-random-string-at-least-32-chars
+
+razorpay.key.id=rzp_test_your_key_id
+razorpay.key.secret=your_key_secret
