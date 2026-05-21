@@ -1,4 +1,4 @@
-# Fix Jenkins Docker Permission Error
+ Fix Jenkins Docker Permission Error
 
 If your pipeline fails with:
 
@@ -12,19 +12,29 @@ Jenkins can see the socket but the `jenkins` user is not allowed to use it.
 
 Use the Jenkins image in this folder. It includes the Docker CLI and runs as **root** so `docker build` and `docker push` work with a mounted socket.
 
-### On the machine where Jenkins runs (Linux)
+### On Windows (PowerShell) — required for Docker build/push stages
+
+```powershell
+cd D:\devops-project\jenkins
+
+docker compose down
+docker rm -f jenkins 2>$null
+
+docker compose up -d --build
+
+# MUST pass — otherwise pipeline fails at "Docker Test"
+docker exec jenkins docker ps
+```
+
+If `docker ps` fails inside Jenkins, the socket is not mounted. Recreate with `docker compose up -d --build` (do not use `docker run` without the socket volume).
+
+### On Linux
 
 ```bash
 cd jenkins
-
-# Stop old Jenkins container if you have one
-docker stop jenkins 2>/dev/null || true
-docker rm jenkins 2>/dev/null || true
-
-# Start Jenkins with Docker socket access
+docker compose down
+docker rm -f jenkins 2>/dev/null || true
 docker compose up -d --build
-
-# Verify Docker works inside Jenkins
 docker exec jenkins docker ps
 ```
 

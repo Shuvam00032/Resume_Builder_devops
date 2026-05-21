@@ -42,12 +42,11 @@ pipeline {
         stage("Docker Test") {
             steps {
                 sh '''
-                    if ! docker ps >/dev/null 2>&1; then
-                      echo "ERROR: Jenkins cannot access Docker."
-                      echo "Fix: mount /var/run/docker.sock and give Jenkins permission."
-                      echo "See jenkins/README.md in this repository."
-                      exit 1
-                    fi
+                    set -e
+                    echo "=== Docker diagnostics ==="
+                    id
+                    ls -l /var/run/docker.sock || echo "MISSING: /var/run/docker.sock not mounted"
+                    docker version
                     docker ps
                 '''
             }
