@@ -155,7 +155,7 @@ const LandingPage = () => {
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-full hover:shadow-lg transition-all duration-300 font-medium"
                 onClick={() => setOpenAuthModal(true)}
               >
-                Get Started Free
+                Get Started Free!
               </button>
             )}
           </div>

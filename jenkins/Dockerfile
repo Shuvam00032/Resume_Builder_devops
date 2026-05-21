@@ -2,8 +2,12 @@ FROM jenkins/jenkins:lts-jdk21
 
 USER root
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends docker.io \
+    && apt-get install -y --no-install-recommends \
+        docker.io \
+        libatomic1 \
+        nodejs \
+        npm \
     && rm -rf /var/lib/apt/lists/*
 
-# Jenkins runs as root so it can use the mounted Docker socket (dev/CI setup).
+# Root user can access the mounted Docker socket (dev/CI setup).
 USER root

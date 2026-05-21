@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS'
-        maven 'Maven3'
-    }
-
     environment {
         FRONTEND_IMAGE = "shuvam0032/resume-builder-frontend"
         BACKEND_IMAGE = "shuvam0032/resume-builder-backend"
@@ -28,6 +23,7 @@ pipeline {
         stage("Build Frontend") {
             steps {
                 dir("resume-builder") {
+                    sh "node -v && npm -v"
                     sh "npm install"
                     sh "npm run build"
                 }
